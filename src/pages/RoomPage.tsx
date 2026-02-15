@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   BedDouble, Search, Filter, Plus, Eye, Edit3, Wifi, Wind, Tv,
   Thermometer, MonitorSpeaker, ChevronDown, X, Clock, DollarSign,
@@ -46,8 +47,8 @@ function RentCalculator({ room, onClose }: { room: Room; onClose: () => void }) 
   const total = price * duration;
   const tc = roomTypeConfig[room.type];
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div className="flex items-center gap-3">
@@ -73,11 +74,10 @@ function RentCalculator({ room, onClose }: { room: Room; onClose: () => void }) 
               <button
                 key={p.u}
                 onClick={() => setUnit(p.u)}
-                className={`p-3 rounded-xl border-2 transition-all text-center ${
-                  unit === p.u
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
+                className={`p-3 rounded-xl border-2 transition-all text-center ${unit === p.u
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-slate-200 hover:border-slate-300'
+                  }`}
               >
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider">{p.label}</p>
                 <p className={`text-lg font-bold ${unit === p.u ? 'text-blue-600' : 'text-slate-900'}`}>
@@ -151,7 +151,8 @@ function RentCalculator({ room, onClose }: { room: Room; onClose: () => void }) 
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -159,8 +160,8 @@ function RoomDetailModal({ room, onClose }: { room: Room; onClose: () => void })
   const tc = roomTypeConfig[room.type];
   const sc = statusConfig[room.status];
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-fadeIn" onClick={(e) => e.stopPropagation()}>
         <div className={`p-5 rounded-t-2xl ${tc.bg} border-b ${tc.border}`}>
           <div className="flex items-center justify-between">
@@ -192,10 +193,9 @@ function RoomDetailModal({ room, onClose }: { room: Room; onClose: () => void })
               <p className="font-semibold text-slate-900">{room.occupied}/{room.capacity} beds</p>
               <div className="mt-1.5 h-1.5 bg-slate-200 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all ${
-                    room.occupied / room.capacity > 0.8 ? 'bg-rose-500' :
+                  className={`h-full rounded-full transition-all ${room.occupied / room.capacity > 0.8 ? 'bg-rose-500' :
                     room.occupied / room.capacity > 0.5 ? 'bg-amber-500' : 'bg-emerald-500'
-                  }`}
+                    }`}
                   style={{ width: `${(room.occupied / room.capacity) * 100}%` }}
                 />
               </div>
@@ -275,7 +275,8 @@ function RoomDetailModal({ room, onClose }: { room: Room; onClose: () => void })
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -372,11 +373,10 @@ export function RoomPage() {
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      pct > 80 ? 'bg-gradient-to-r from-rose-400 to-rose-500' :
+                    className={`h-full rounded-full transition-all duration-500 ${pct > 80 ? 'bg-gradient-to-r from-rose-400 to-rose-500' :
                       pct > 50 ? 'bg-gradient-to-r from-amber-400 to-amber-500' :
-                      'bg-gradient-to-r from-emerald-400 to-emerald-500'
-                    }`}
+                        'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                      }`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -385,12 +385,11 @@ export function RoomPage() {
                     <button
                       key={r.id}
                       onClick={() => setSelectedRoom(r)}
-                      className={`w-7 h-7 rounded-lg text-[9px] font-bold flex items-center justify-center transition-all hover:scale-110 cursor-pointer ${
-                        r.status === 'available' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' :
+                      className={`w-7 h-7 rounded-lg text-[9px] font-bold flex items-center justify-center transition-all hover:scale-110 cursor-pointer ${r.status === 'available' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' :
                         r.status === 'occupied' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' :
-                        r.status === 'reserved' ? 'bg-violet-100 text-violet-700 hover:bg-violet-200' :
-                        'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                      }`}
+                          r.status === 'reserved' ? 'bg-violet-100 text-violet-700 hover:bg-violet-200' :
+                            'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                        }`}
                       title={`Room ${r.number}`}
                     >
                       {r.number}
@@ -481,9 +480,8 @@ export function RoomPage() {
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setFilterType('all')}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-            filterType === 'all' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-          }`}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${filterType === 'all' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
         >
           All ({allRooms.length})
         </button>
@@ -493,9 +491,8 @@ export function RoomPage() {
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all inline-flex items-center gap-1.5 ${
-                filterType === type ? `${config.bg} ${config.color} border ${config.border}` : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-              }`}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all inline-flex items-center gap-1.5 ${filterType === type ? `${config.bg} ${config.color} border ${config.border}` : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
             >
               <span>{config.icon}</span> {config.label} ({count})
             </button>
@@ -545,9 +542,8 @@ export function RoomPage() {
                     </div>
                     <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          occupancyPct > 80 ? 'bg-rose-500' : occupancyPct > 50 ? 'bg-amber-500' : 'bg-emerald-500'
-                        }`}
+                        className={`h-full rounded-full transition-all ${occupancyPct > 80 ? 'bg-rose-500' : occupancyPct > 50 ? 'bg-amber-500' : 'bg-emerald-500'
+                          }`}
                         style={{ width: `${occupancyPct}%` }}
                       />
                     </div>
@@ -691,8 +687,8 @@ export function RoomPage() {
       {calcRoom && <RentCalculator room={calcRoom} onClose={() => setCalcRoom(null)} />}
 
       {/* Add Room Modal */}
-      {showAddRoom && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAddRoom(false)}>
+      {showAddRoom && createPortal(
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setShowAddRoom(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-fadeIn" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-5 border-b border-slate-100">
               <h3 className="font-semibold text-slate-900 text-lg">Add New Room</h3>
@@ -765,7 +761,8 @@ export function RoomPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

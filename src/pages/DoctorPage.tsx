@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Search, Star, Clock, Calendar, Phone, Mail, ChevronDown,
   UserPlus, X, Users, CheckCircle2, AlertCircle, Filter,
@@ -23,8 +24,8 @@ function DoctorDetailModal({ doctor, onClose }: { doctor: Doctor; onClose: () =>
   const [activeTab, setActiveTab] = useState<'schedule' | 'appointments'>('schedule');
   const doctorAppointments = allAppointments.filter(a => a.doctorId === doctor.id);
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-fadeIn" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 text-white relative overflow-hidden">
@@ -114,17 +115,15 @@ function DoctorDetailModal({ doctor, onClose }: { doctor: Doctor; onClose: () =>
           <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-4">
             <button
               onClick={() => setActiveTab('schedule')}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === 'schedule' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
-              }`}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'schedule' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                }`}
             >
               Weekly Schedule
             </button>
             <button
               onClick={() => setActiveTab('appointments')}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === 'appointments' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
-              }`}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'appointments' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                }`}
             >
               Today's Appointments ({doctorAppointments.length})
             </button>
@@ -183,7 +182,8 @@ function DoctorDetailModal({ doctor, onClose }: { doctor: Doctor; onClose: () =>
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -191,8 +191,8 @@ function BookAppointmentModal({ onClose }: { onClose: () => void }) {
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [appointmentType, setAppointmentType] = useState('regular');
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-fadeIn" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div>
@@ -217,11 +217,10 @@ function BookAppointmentModal({ onClose }: { onClose: () => void }) {
                 <button
                   key={t.value}
                   onClick={() => setAppointmentType(t.value)}
-                  className={`p-3 rounded-xl border-2 transition-all text-center ${
-                    appointmentType === t.value
-                      ? `border-${t.color}-500 bg-${t.color}-50`
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  className={`p-3 rounded-xl border-2 transition-all text-center ${appointmentType === t.value
+                    ? `border-${t.color}-500 bg-${t.color}-50`
+                    : 'border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                   <t.icon className={`w-5 h-5 mx-auto mb-1 ${appointmentType === t.value ? `text-${t.color}-500` : 'text-slate-400'}`} />
                   <p className="text-[10px] font-medium text-slate-700">{t.label}</p>
@@ -322,7 +321,8 @@ function BookAppointmentModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -342,7 +342,7 @@ export function DoctorPage() {
         d.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
         d.nameBn.includes(searchQuery);
       const matchesDept = filterDept === 'all' || d.department === filterDept;
-      const matchesAvail = filterAvailability === 'all' || 
+      const matchesAvail = filterAvailability === 'all' ||
         (filterAvailability === 'available' && d.available) ||
         (filterAvailability === 'busy' && !d.available);
       return matchesSearch && matchesDept && matchesAvail;
@@ -395,17 +395,15 @@ export function DoctorPage() {
       <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit">
         <button
           onClick={() => setActiveView('doctors')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            activeView === 'doctors' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'
-          }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'doctors' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'
+            }`}
         >
           <Stethoscope className="w-4 h-4 inline mr-1.5" />Doctor Panel
         </button>
         <button
           onClick={() => setActiveView('queue')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            activeView === 'queue' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'
-          }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'queue' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-700'
+            }`}
         >
           <Users className="w-4 h-4 inline mr-1.5" />Patient Queue
         </button>
@@ -463,9 +461,8 @@ export function DoctorPage() {
                 {/* Card Header */}
                 <div className="relative p-5 pb-3">
                   <div className="absolute top-3 right-3">
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      doctor.available ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-                    }`}>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${doctor.available ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                      }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${doctor.available ? 'bg-emerald-500 animate-pulse-soft' : 'bg-rose-400'}`} />
                       {doctor.available ? 'Available' : 'Fully Booked'}
                     </span>
@@ -513,10 +510,9 @@ export function DoctorPage() {
                     </div>
                     <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          (doctor.todayAppointments / doctor.maxAppointments) >= 1 ? 'bg-rose-500' :
+                        className={`h-full rounded-full transition-all ${(doctor.todayAppointments / doctor.maxAppointments) >= 1 ? 'bg-rose-500' :
                           (doctor.todayAppointments / doctor.maxAppointments) > 0.7 ? 'bg-amber-500' : 'bg-emerald-500'
-                        }`}
+                          }`}
                         style={{ width: `${Math.min((doctor.todayAppointments / doctor.maxAppointments) * 100, 100)}%` }}
                       />
                     </div>
@@ -545,11 +541,10 @@ export function DoctorPage() {
                     <button
                       onClick={() => setShowBooking(true)}
                       disabled={!doctor.available}
-                      className={`flex-1 py-2 rounded-xl text-xs font-medium transition-all ${
-                        doctor.available
-                          ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-md hover:shadow-blue-500/30'
-                          : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                      }`}
+                      className={`flex-1 py-2 rounded-xl text-xs font-medium transition-all ${doctor.available
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-md hover:shadow-blue-500/30'
+                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        }`}
                     >
                       {doctor.available ? 'Book Now' : 'Full'}
                     </button>
@@ -588,15 +583,13 @@ export function DoctorPage() {
               {allAppointments.map((apt) => {
                 const sc = statusColors[apt.status];
                 return (
-                  <div key={apt.id} className={`flex items-center gap-4 p-3 rounded-xl border transition-all ${
-                    apt.status === 'in-progress' ? 'border-blue-200 bg-blue-50/30' : 'border-slate-100 hover:bg-slate-50'
-                  }`}>
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold ${
-                      apt.status === 'in-progress' ? 'bg-blue-500 text-white' :
-                      apt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                      apt.status === 'cancelled' ? 'bg-rose-100 text-rose-700' :
-                      'bg-slate-100 text-slate-700'
+                  <div key={apt.id} className={`flex items-center gap-4 p-3 rounded-xl border transition-all ${apt.status === 'in-progress' ? 'border-blue-200 bg-blue-50/30' : 'border-slate-100 hover:bg-slate-50'
                     }`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold ${apt.status === 'in-progress' ? 'bg-blue-500 text-white' :
+                      apt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                        apt.status === 'cancelled' ? 'bg-rose-100 text-rose-700' :
+                          'bg-slate-100 text-slate-700'
+                      }`}>
                       #{apt.tokenNumber}
                     </div>
                     <div className="flex-1 min-w-0">

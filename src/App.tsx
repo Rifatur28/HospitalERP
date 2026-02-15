@@ -11,6 +11,7 @@ import {
 export function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [language, setLanguage] = useState<'en' | 'bn'>('en');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -41,20 +42,20 @@ export function App() {
     <div className="min-h-screen bg-slate-50 gradient-mesh">
       {/* Sidebar */}
       <div className="hidden lg:block">
-        <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} />
+        <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} collapsed={sidebarCollapsed} onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)} />
       </div>
 
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setShowMobileMenu(false)}>
           <div className="w-[260px] h-full" onClick={(e) => e.stopPropagation()}>
-            <Sidebar currentPage={currentPage} onPageChange={(page) => { setCurrentPage(page); setShowMobileMenu(false); }} />
+            <Sidebar currentPage={currentPage} onPageChange={(page) => { setCurrentPage(page); setShowMobileMenu(false); }} collapsed={false} onToggleCollapse={() => { }} />
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <main className="lg:ml-[260px] min-h-screen">
+      <main className={`min-h-screen transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:ml-[78px]' : 'lg:ml-[260px]'}`}>
         {/* Top Header Bar */}
         <header className="sticky top-0 z-30 glass-effect border-b border-slate-200/60">
           <div className="flex items-center justify-between px-4 lg:px-6 py-3">
@@ -161,7 +162,7 @@ export function App() {
         {/* Footer */}
         <footer className="px-6 py-4 border-t border-slate-200/60 text-center">
           <p className="text-xs text-slate-400">
-            © 2025 MediCare ERP System • Bangladesh Hospital Management Solution • 
+            © 2025 MediCare ERP System • Bangladesh Hospital Management Solution •
             <span className="ml-1">
               {language === 'en' ? 'All rights reserved' : 'সর্বস্বত্ব সংরক্ষিত'}
             </span>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   LayoutDashboard, BedDouble, Stethoscope, ChevronLeft, ChevronRight,
   Activity, Settings, LogOut, Shield, Bell, Hospital
@@ -8,10 +7,11 @@ import type { PageType } from '../types';
 interface SidebarProps {
   currentPage: PageType;
   onPageChange: (page: PageType) => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+export function Sidebar({ currentPage, onPageChange, collapsed, onToggleCollapse }: SidebarProps) {
 
   const menuItems = [
     { id: 'dashboard' as PageType, label: 'Dashboard', labelBn: 'ড্যাশবোর্ড', icon: LayoutDashboard },
@@ -26,9 +26,8 @@ export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out ${
-        collapsed ? 'w-[78px]' : 'w-[260px]'
-      }`}
+      className={`fixed left-0 top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out ${collapsed ? 'w-[78px]' : 'w-[260px]'
+        }`}
       style={{
         background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
       }}
@@ -48,7 +47,7 @@ export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
 
       {/* Collapse button */}
       <button
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={onToggleCollapse}
         className="absolute -right-3 top-16 w-6 h-6 bg-slate-800 border border-slate-600 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-700 hover:text-white transition-colors z-50 shadow-lg"
       >
         {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
@@ -78,11 +77,10 @@ export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
             <button
               key={item.id}
               onClick={() => onPageChange(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
-                isActive
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${isActive
                   ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-600/30'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
-              } ${collapsed ? 'justify-center' : ''}`}
+                } ${collapsed ? 'justify-center' : ''}`}
             >
               {isActive && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-cyan-400 rounded-r-full -ml-3" />
